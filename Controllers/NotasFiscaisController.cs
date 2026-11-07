@@ -56,4 +56,31 @@ public class NotasFiscaisController : ControllerBase
             nota
         );
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Listar()
+    {
+        var notas = await _context.NotasFiscais
+            .Include(n => n.Cliente)
+            .Include(n => n.Itens)
+            .ToListAsync();
+
+        return Ok(notas);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> ObterPorId(int id)
+    {
+        var nota = await _context.NotasFiscais
+            .Include(n => n.Cliente)
+            .Include(n => n.Itens)
+            .FirstOrDefaultAsync(n => n.Id == id);
+
+        if (nota == null)
+        {
+            return NotFound("Nota fiscal não encontrada.");
+        }
+
+        return Ok(nota);
+    }
 }
