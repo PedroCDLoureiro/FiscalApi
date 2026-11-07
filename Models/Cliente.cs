@@ -1,4 +1,5 @@
 namespace FiscalApi.Models;
+using System.Text.Json.Serialization;
 
 public class Cliente
 {
@@ -9,5 +10,8 @@ public class Cliente
     public string Cnpj { get; set; } = string.Empty;
 
     public string Email { get; set; } = string.Empty;
-    public ICollection<NotaFiscal> NotasFiscais { get; set; } = new List<NotaFiscal>();
+    
+    [JsonIgnore]
+    public ICollection<NotaFiscal> NotasFiscais { get; set; }
+    = new List<NotaFiscal>(); 
 }
