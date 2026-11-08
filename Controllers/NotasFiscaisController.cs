@@ -95,4 +95,34 @@ public class NotasFiscaisController : ControllerBase
 
         return Ok(notas);
     }
+
+    [HttpGet("periodo")]
+    public async Task<IActionResult> ListarPorPeriodo(DateTime inicio, DateTime fim)
+    {
+        var notas = await _context.NotasFiscais
+            .Where(n => n.DataEmissao >= inicio && n.DataEmissao <= fim)
+            .Include(n => n.Cliente)
+            .Include(n => n.Itens)
+            .OrderBy(n => n.DataEmissao)
+            .ToListAsync();
+
+        return Ok(notas);
+    }
+
+    [HttpGet("resumo")]
+    public async Task<IActionResult> ObterResumo()
+    {
+        var quantidadeNotas = await _context.NotasFiscais.CountAsync();
+
+        var valorTotal = await _context.NotasFiscais.SumAsync(n => n.ValorTotal);
+
+        var valorMedio = await _context.NotasFiscais.Select(n => (double?)n.ValorTotal).AverageAsync();
+
+        return Ok(new
+        {
+            QuantidadeNotas = quantidadeNotas,
+            ValorTotal = valorTotal,
+            ValorMedio = valorMedio ?? 0
+        });
+    }
 }
