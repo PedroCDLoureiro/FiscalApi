@@ -83,4 +83,16 @@ public class NotasFiscaisController : ControllerBase
 
         return Ok(nota);
     }
+
+    [HttpGet("cliente/{clienteId}")]
+    public async Task<IActionResult> ListarPorCliente(int clienteId)
+    {
+        var notas = await _context.NotasFiscais
+            .Where(n => n.ClienteId == clienteId)
+            .Include(n => n.Cliente)
+            .Include(n => n.Itens)
+            .ToListAsync();
+
+        return Ok(notas);
+    }
 }
