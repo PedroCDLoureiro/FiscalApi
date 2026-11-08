@@ -20,6 +20,17 @@ public class NotasFiscaisController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Criar(CriarNotaFiscalDto dto)
     {
+        var numeroJaExiste = await _context.NotasFiscais
+        .AnyAsync(n => n.Numero == dto.Numero);
+
+        if (numeroJaExiste)
+        {
+            return Conflict(new
+            {
+                mensagem = "Já existe uma nota fiscal com esse número."
+            });
+        }
+
         var cliente = await _context.Clientes
             .FindAsync(dto.ClienteId);
 
